@@ -1,0 +1,1009 @@
+
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Stream X IPTV</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0f0c29, #302b63, #222);
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #7c6df0;
+            border-radius: 10px;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(15, 12, 41, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 0.75rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a78bfa, #7c6df0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            flex-shrink: 0;
+        }
+        .categories {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding: 0.25rem 0;
+            flex: 1;
+            scrollbar-width: thin;
+            -webkit-overflow-scrolling: touch;
+        }
+        .categories::-webkit-scrollbar {
+            height: 4px;
+        }
+        .cat-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+            position: relative;
+        }
+        .cat-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .cat-btn.active {
+            color: #fff;
+            background: rgba(124, 109, 240, 0.25);
+            box-shadow: 0 0 0 1px rgba(124, 109, 240, 0.3);
+        }
+        .cat-btn i {
+            margin-right: 5px;
+            font-size: 0.9rem;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 30px;
+            padding: 0.3rem 0.3rem 0.3rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: border 0.25s;
+            flex-shrink: 0;
+            min-width: 180px;
+        }
+        .search-box:focus-within {
+            border-color: rgba(124, 109, 240, 0.5);
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 0.85rem;
+            padding: 0.4rem 0;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+        }
+        .search-box .search-icon {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 1rem;
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .search-box .search-icon:hover {
+            color: #a78bfa;
+        }
+
+        /* MAIN GRID */
+        .main-wrap {
+            max-width: 1400px;
+            margin: 1.5rem auto 0;
+            padding: 0 1.5rem;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+        .section-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 0.5px;
+        }
+        .section-header h2 i {
+            color: #a78bfa;
+            margin-right: 8px;
+        }
+        .section-header .result-count {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+        @media (min-width: 576px) {
+            .channels-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+        }
+        @media (min-width: 768px) {
+            .channels-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+        @media (min-width: 992px) {
+            .channels-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+        }
+
+        .channel-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 1rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            text-decoration: none;
+            color: #fff;
+            min-height: 130px;
+            position: relative;
+        }
+        .channel-card:hover {
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(124, 109, 240, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+        .channel-card:active {
+            transform: scale(0.96);
+        }
+        .channel-card .logo-wrap {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 6px;
+            margin-bottom: 0.6rem;
+            transition: background 0.3s;
+        }
+        .channel-card:hover .logo-wrap {
+            background: rgba(0, 0, 0, 0.35);
+        }
+        .channel-card .logo-wrap img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+            transition: transform 0.3s;
+        }
+        .channel-card:hover .logo-wrap img {
+            transform: scale(1.05);
+        }
+        .channel-card .channel-name {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            max-width: 100%;
+            padding: 0 0.2rem;
+        }
+        .channel-card .play-icon {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.15);
+            transition: color 0.3s;
+        }
+        .channel-card:hover .play-icon {
+            color: rgba(167, 139, 250, 0.7);
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #1a1833;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 1000px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            animation: slideUp 0.35s ease;
+        }
+        .modal-box .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #fff;
+            font-size: 1.6rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+        .modal-box .modal-close:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .modal-box iframe {
+            width: 100%;
+            height: 70vh;
+            min-height: 400px;
+            border: none;
+            display: block;
+            background: #000;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem 1rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .empty-state i {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 0.75rem;
+        }
+        .empty-state p {
+            font-size: 0.95rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 640px) {
+            .nav-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+            .logo {
+                text-align: center;
+                font-size: 1.4rem;
+            }
+            .categories {
+                gap: 0.3rem;
+                padding-bottom: 0.2rem;
+            }
+            .cat-btn {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.8rem;
+            }
+            .search-box {
+                min-width: unset;
+                width: 100%;
+            }
+            .channels-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 0.7rem;
+            }
+            .channel-card {
+                min-height: 110px;
+                padding: 0.7rem 0.3rem;
+            }
+            .channel-card .logo-wrap {
+                width: 55px;
+                height: 55px;
+            }
+            .channel-card .channel-name {
+                font-size: 0.6rem;
+            }
+            .modal-box iframe {
+                height: 50vh;
+                min-height: 250px;
+            }
+            .modal-box .modal-close {
+                top: 6px;
+                right: 10px;
+                width: 34px;
+                height: 34px;
+                font-size: 1.3rem;
+            }
+        }
+        @media (max-width: 400px) {
+            .channels-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                gap: 0.5rem;
+            }
+            .channel-card .logo-wrap {
+                width: 90px;
+                height: 90px;
+            }
+            .channel-card .channel-name {
+                font-size: 0.55rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="go:vip2" class="logo">DontKnow</a>
+            <div class="categories" id="categoryContainer">
+                <!-- สร้างด้วย JS -->
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="ค้นหาช่อง..." autocomplete="off">
+                <i class="bi bi-search search-icon"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN -->
+    <div class="main-wrap">
+        <div class="section-header">
+            <h2><i class="bi bi-broadcast"></i> <span id="categoryTitle">ฟรีทีวี</span></h2>
+            <span class="result-count" id="resultCount">0 ช่อง</span>
+        </div>
+        <div class="channels-grid" id="channelsGrid">
+            <!-- สร้างด้วย JS -->
+        </div>
+    </div>
+
+    <!-- MODAL PLAYER -->
+    <div class="modal-overlay" id="playerModal">
+        <div class="modal-box">
+            <button class="modal-close" id="closeModalBtn">&times;</button>
+            <iframe id="playerIframe" src="" allowfullscreen loading="lazy"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — ช่องทั้งหมดจากไฟล์ HTML ที่ให้มา (คัดเลือกตัวอย่างครบทุกหมวด)
+        // ============================================================
+        const CHANNELS = {
+
+            // ---------- ฟรีทีวี (fr.html) ----------
+            fr: [
+                { id: 'hd-ch3', name: 'ช่อง 3', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-ch3.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-ch3&api_key=MIcWPyCpm6maZGJQ' },
+ 		{ id: 'ch3', name: 'ช่อง 3HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-ch3.png',
+                    url: 'https://kicksball.com/player/ch3hd' },
+                { id: 'hd-ch5', name: 'ช่อง 5', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-ch5.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-ch5&api_key=MIcWPyCpm6maZGJQ' },
+ 		{ id: 'ch5', name: 'ช่อง 5HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-ch5.png',
+                    url: 'https://kicksball.com/player/ch5hd' },
+                { id: 'hd-ch7', name: 'ช่อง 7', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-ch7.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-ch7&api_key=MIcWPyCpm6maZGJQ' },
+ 		{ id: 'ch7', name: 'ช่อง 7HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-ch7.png',
+                    url: 'https://kicksball.com/player/ch7hd' },
+                { id: 'hd-mcot', name: 'MCOT', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-mcot.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-mcot&api_key=MIcWPyCpm6maZGJQ' },
+		{ id: 'mcot', name: 'MCOTHD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-mcot.png',
+                    url: 'https://kicksball.com/player/mcothd' },
+                { id: 'sd-nbt', name: 'NBT', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-nbt.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-nbt&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'hd-thairath', name: 'ไทยรัฐทีวี', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-thairath.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-thairath&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'hd-pptv', name: 'PPTV', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-pptv.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-pptv&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'hd-tpbs', name: 'Thai PBS', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-tpbs.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-tpbs&api_key=MIcWPyCpm6maZGJQ' },
+		{ id: 'tpbs', name: 'Thai PBS HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-tpbs.png',
+                    url: 'https://kicksball.com/player/thaipbs' },
+                { id: 'hd-amarin', name: 'อมรินทร์ทีวี', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-amarin.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-amarin&api_key=MIcWPyCpm6maZGJQ' },
+ 		{ id: 'amarin', name: 'อมรินทร์ทีวี HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-amarin.png',
+                    url: 'https://kicksball.com/player/amarintv' },
+                { id: 'hd-gmmone', name: 'One31', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-gmmone.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-gmmone&api_key=MIcWPyCpm6maZGJQ' },
+		 { id: 'gmmone', name: 'One HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-gmmone.png',
+                    url: 'https://kicksball.com/player/one31' },
+                { id: 'sd-nation', name: 'Nation TV', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-nation.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-nation&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'sd-tnn24', name: 'TNN24', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-tnn24.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-tnn24&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'hd-workpoint', name: 'Workpoint', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-workpoint.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-workpoint&api_key=MIcWPyCpm6maZGJQ' },
+		 { id: 'workpoint', name: 'Workpoint TV', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-workpoint.png',
+                    url: 'https://kicksball.com/player/workpointtv' },
+                { id: 'sd-gmmchannel', name: 'GMM Channel', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-gmmchannel.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-gmmchannel&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'hd-mono', name: 'Mono 29', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-mono.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-mono&api_key=MIcWPyCpm6maZGJQ' },
+ 		{ id: 'mono', name: 'Mono Sport', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-mono.png',
+                    url: 'https://kicksball.com/player/mono29' },
+                { id: 'hd-ch8', name: 'ช่อง 8', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-ch8.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-ch8&api_key=MIcWPyCpm6maZGJQ' },
+      		{ id: 'ch8', name: 'ช่อง 8HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-ch8.png',
+                    url: 'https://kicksball.com/player/ch8' },
+                { id: 'sd-24u', name: '24U', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-24u.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-24u&api_key=MIcWPyCpm6maZGJQ' },
+		{ id: 'sd-tptv', name: 'TPTV', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-tptv.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-tptv&api_key=MIcWPyCpm6maZGJQ' },
+            
+            ],
+
+            // ---------- กีฬา (sp.html) ----------
+            sp: [
+
+       { id: 'th-monomax01', name: 'monomax 1', logo: 'https://images.streamx-web.org/images/tv/png/th-monomax01bkp.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-monomax01bkp&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'th-monomax01', name: 'monomax01', logo: 'https://images.streamx-web.org/images/tv/png/th-monomax01.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=epl-monomax02&api_key=MIcWPyCpm6maZGJQ' },
+               { id: 'th-monomax02bkp', name: 'monomax02bkp', logo: 'https://images.streamx-web.org/images/tv/png/th-monomax02bkp.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-monomax02bkp&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'th-monomax03', name: 'th-monomax03', logo: 'https://images.streamx-web.org/images/tv/png/th-monomax03.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-monomax03bkp&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'th-monomax04', name: 'max4', logo: 'https://images.streamx-web.org/images/tv/png/th-monomax04.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-monomax04&api_key=MIcWPyCpm6maZGJQ' },				
+                { id: 'epl-bein1', name: 'beIN 1', logo: 'https://images.streamx-web.org/images/tv/png/epl-bein1.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=epl-bein1&api_key=MIcWPyCpm6maZGJQ' },
+              	{ id: 'epl-bein1bkp', name: 'beIN 1', logo: 'https://images.streamx-web.org/images/tv/png/epl-bein1bkp.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=epl-bein1bkp&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'epl-bein2', name: 'beIN 2', logo: 'https://images.streamx-web.org/images/tv/png/epl-bein2.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=epl-bein2&api_key=MIcWPyCpm6maZGJQ' },
+               	{ id: 'epl-bein2bkp', name: 'beIN 2', logo: 'https://images.streamx-web.org/images/tv/png/epl-bein2bkp.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=epl-bein2bkp&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'epl-bein3', name: 'beIN 3', logo: 'https://images.streamx-web.org/images/tv/png/epl-bein3.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=epl-bein3&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'epl-bein3bkp', name: 'beIN 3', logo: 'https://images.streamx-web.org/images/tv/png/epl-bein3bkp.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=epl-bein3bkp&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'th-nba01', name: 'NBA 1', logo: 'https://images.streamx-web.org/images/tv/png/th-nba01.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-nba01&api_key=MIcWPyCpm6maZGJQ' },
+   		{ id: 'th-nba02', name: 'NBA 2', logo: 'https://images.streamx-web.org/images/tv/png/th-nba02.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-nba02&api_key=MIcWPyCpm6maZGJQ' },				
+                { id: 'hd-spotv', name: 'SPOTV', logo: 'https://images.streamx-web.org/images/tv/png/hd-spotv.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-spotv&api_key=MIcWPyCpm6maZGJQ' },
+		 { id: 'hd-spotv', name: 'SPOTV2', logo: 'https://images.streamx-web.org/images/tv/png/hd-spotv2.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-spotv2&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'hd-tennis', name: 'Tennis', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-tennis.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-tennis&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'hd-tsport1', name: 'T Sport 1', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-tsport1.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-tsport1&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'hd-tsport2', name: 'T Sport 2', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-tsport2.png',
+                url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-tsport2&api_key=MIcWPyCpm6maZGJQ' },
+		{ id: 'tsport2', name: 'TSport2 HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-tsport2.png',
+                url: 'https://kicksball.com/player/tsp2' },   
+                { id: 'hd-tspor3', name: 'T Sport 3', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-tsport3.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-tsport3&api_key=MIcWPyCpm6maZGJQ' },
+		{ id: 'tspor3', name: 'TSport3 HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-tsport3.png',
+                    url: 'https://kicksball.com/player/tsp3' },
+                { id: 'th-tsporthd3', name: 'T Sport 3', logo: 'https://images.streamx-web.org/images/tv/channels_icons/th-tsporthd3.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-tsporthd3&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'th-tsporthd4', name: 'T Sport HD 4', logo: 'https://images.streamx-web.org/images/tv/channels_icons/th-tsporthd4.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-tsporthd4&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'sd-tsport5', name: 'T Sport 5', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-tsport5.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-tsport5&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'sd-tsport7', name: 'T Sport 7', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-tsport5.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-tsport7&api_key=MIcWPyCpm6maZGJQ' },        
+                { id: 'sd-tsport7bkp', name: 'T TSport7bkp', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-tsport7bkp.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-tsport7bkp&api_key=MIcWPyCpm6maZGJQ' },                        
+                { id: 'th-golf01', name: 'Golf', logo: 'https://images.streamx-web.org/images/tv/png/th-golf01.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-golf01&api_key=MIcWPyCpm6maZGJQ' },
+               	{ id: 'th-golf02', name: 'Golf2', logo: 'https://images.streamx-web.org/images/tv/png/th-golf02.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-golf02&api_key=MIcWPyCpm6maZGJQ' },
+              	{ id: 'th-golf03', name: 'Golf3', logo: 'https://images.streamx-web.org/images/tv/png/th-golf03.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-golf03&api_key=MIcWPyCpm6maZGJQ' },
+              	{ id: 'th-golf04', name: 'Golf4', logo: 'https://images.streamx-web.org/images/tv/png/th-golf04.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-golf04&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-btsport1hd', name: 'BT Sport 1', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-btsport1hd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-btsport1hd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-btsport2hd', name: 'BT Sport 2', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-btsport2hd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-btsport2hd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-btsport3hd', name: 'BT Sport 3', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-btsport3hd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-btsport3hd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-espn', name: 'ESPN', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-espn.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-espn&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-skysports-football', name: 'Sky Sports Football',logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-skysports-football.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-skysports-football&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'us-nfl', name: 'NFL', logo: 'https://images.streamx-web.org/images/tv/png/us-nfl.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=us-nfl&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'us-nba', name: 'NBA', logo: 'https://images.streamx-web.org/images/tv/png/us-nba.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=us-nba&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'hd-eurosport', name: 'Eurosport', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-eurosport.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-eurosport&api_key=MIcWPyCpm6maZGJQ' },
+            ],
+
+            // ---------- สารคดี (dc.html) ----------
+            dc: [
+
+ 		{ id: 'hd-history', name: 'History', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-history.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-history&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'sd-discovery', name: 'Discovery', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-discovery.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-discovery&api_key=MIcWPyCpm6maZGJQ',},
+		{ id: 'hd-discovery', name: 'Discovery HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-discovery.png',
+                    url: 'https://kicksball.com/player/discovery',},
+                { id: 'samrujlok', name: 'Samrujlok', logo: 'https://raw.githubusercontent.com/jasminrabbit/logo/refs/heads/main/SamRujLok.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-samrujlok&api_key=MIcWPyCpm6maZGJQ' },
+		{ id: 'hd-samrujlok', name: 'Samrujlok HD', logo: 'https://raw.githubusercontent.com/jasminrabbit/logo/refs/heads/main/SamRujLok.png',
+                    url: 'https://kicksball.com/player/samrujlok' },
+		{ id: 'th-animalshow', name: 'Animal Show', logo: 'https://raw.githubusercontent.com/jasminrabbit/logo/refs/heads/main/AnimalShow.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-animalshow&api_key=MIcWPyCpm6maZGJQ' },
+		{ id: 'hd-animalshow', name: 'Animal Show HD', logo: 'https://raw.githubusercontent.com/jasminrabbit/logo/refs/heads/main/AnimalShow.png',
+                    url: 'https://kicksball.com/player/animalshow' },	
+                { id: 'hd-food', name: 'Food Network', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-food.png',
+                    url: 'https://kicksball.com/player/foodnetwork' },              
+                { id: 'sd-asianfood', name: 'Asian Food', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-asianfood.png',
+                    url: 'https://kicksball.com/player/afn' },
+ 		{ id: 'thainess', name: 'Thainess', logo: 'https://raw.githubusercontent.com/jasminrabbit/logo/refs/heads/main/Thainess.png',
+                    url: 'https://kicksball.com/player/thainess' },
+		{ id: 'tlc', name: 'TLC', logo: 'https://raw.githubusercontent.com/jasminrabbit/logo/refs/heads/main/TLC.png',
+                    url: 'https://kicksball.com/player/tlc' },
+  	      { id: 'sd-expsci', name: 'Science', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-expsci.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-expsci&api_key=MIcWPyCpm6maZGJQ' },
+		
+            ],
+
+            // ---------- บันเทิง (mv.html) ----------
+            mv: [
+		{ id: 'th-hbo', name: 'hbo', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-hbo.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-hbo&api_key=MIcWPyCpm6maZGJQ' },
+		{ id: 'hd-hbo', name: 'hbo-hd', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-hbo.png',
+                    	url: 'https://kicksball.com/player/hbo' },
+                { id: 'th-hbofamily', name: 'hbofamily', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-hbofamily.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-hbofamily&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'hd-hbofamily', name: 'hbofamily-hd', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-hbofamily.png',
+                    	url: 'https://kicksball.com/player/hbo-family' },
+                { id: 'th-hbohits', name: 'hbohits', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-hbohits.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-hbohits&api_key=MIcWPyCpm6maZGJQ' },
+ 		{ id: 'hd-hbohits', name: 'hbohits-hd', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-hbohits.png',
+		   	url: 'https://kicksball.com/player/hbo-hits' },
+                { id: 'th-hbosignature', name: 'hbosignature', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-hbosignature.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-hbosignature&api_key=MIcWPyCpm6maZGJQ' },
+		{ id: 'hd-hbosignature', name: 'hbosignature-hd', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-hbosignature.png',
+                   	 url: 'https://kicksball.com/player/hbo-signature' },
+                { id: 'hd-cinemax', name: 'Cinemax', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-cinemax.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-cinemax&api_key=MIcWPyCpm6maZGJQ' },
+ 		{ id: 'cinemax', name: 'Cinemax-hd', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-cinemax.png',
+                   	 url: 'https://kicksball.com/player/cinemax' },
+                { id: 'hd-axn', name: 'axn', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-axn.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-axn&api_key=MIcWPyCpm6maZGJQ' },
+ 		{ id: 'axn', name: 'axn-hd', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-axn.png',
+                    	url: 'https://kicksball.com/player/axn' },
+		{ id: 'th-blueant', name: 'Rock Xstream', logo: 'https://raw.githubusercontent.com/jasminrabbit/logo/refs/heads/main/RockXStream.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-blueant&api_key=MIcWPyCpm6maZGJQ' },    
+		{ id: 'hd- Xstream', name: 'Rock Xstream HD', logo: 'https://raw.githubusercontent.com/jasminrabbit/logo/refs/heads/main/RockXStream.png',
+                    	url: 'https://kicksball.com/player/rock-x-stream' },
+		{ id: 'th-blueantex', name: 'Rock Action', logo: 'https://raw.githubusercontent.com/jasminrabbit/logo/refs/heads/main/RockAction.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=th-blueantex&api_key=MIcWPyCpm6maZGJQ' },
+		{ id: 'hd-blueantex', name: 'Rock Action HD', logo: 'https://raw.githubusercontent.com/jasminrabbit/logo/refs/heads/main/RockAction.png',
+		    	url: 'https://kicksball.com/player/rock-action' },
+		{ id: 'hd-entertain', name: 'Rock Entertainment HD', logo: 'https://raw.githubusercontent.com/jasminrabbit/logo/refs/heads/main/Rock-Entertainment.png',
+		    	url: 'https://kicksball.com/player/rock-entertainment' }, 
+                { id: 'hd-warnertv', name: 'Warner TV', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-warnertv.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-warnertv&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'warnertv', name: 'Warner TV HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-warnertv.png',
+		   	url: 'https://kicksball.com/player/warnertv' },               
+		{ id: 'hd-asianmore', name: 'Asian More', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-asianmore.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-asianmore&api_key=MIcWPyCpm6maZGJQ' },
+		{ id: 'asianmore', name: 'True asianmore-hd', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-asianmore.png',
+ 			url: 'https://kicksball.com/player/trueasianmore' },
+               	{ id: 'hd-tfilm', name: 'tfilm1', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-tfilm.png',
+                   	 url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-tfilm&api_key=MIcWPyCpm6maZGJQ' },
+  		{ id: 'tfilm', name: 'tfilm1-hd', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-tfilm.png',
+			url: 'https://kicksball.com/player/truefilm1' },
+                { id: 'hd-tfilm2', name: 'tfilm2', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-tfilm2.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-tfilm2&api_key=MIcWPyCpm6maZGJQ' },
+        	{ id: 'tfilm2', name: 'tfilm2-hd', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-tfilm2.png',
+			url: 'https://kicksball.com/player/truefilm2' },
+                { id: 'th-thaifilm', name: 'thaifilm', logo: 'https://images.streamx-web.org/images/tv/channels_icons/th-thaifilm.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-thaifilm&api_key=MIcWPyCpm6maZGJQ' },        
+                 { id: 'sd-filmasia', name: 'Film Asia', logo: 'https://images.streamx-web.org/images/tv/png/sd-filmasia.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-filmasia&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'sd-moviehits', name: 'Movie Hits', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-moviehits.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-moviehits&api_key=MIcWPyCpm6maZGJQ' },                
+                { id: 'sd-celestial', name: 'Celestial', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-celestial.png',
+                   	 url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-celestial&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'sd-series', name: 'Series', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-series.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-series&api_key=MIcWPyCpm6maZGJQ' },
+		{ id: 'hd-xzyte', name: 'Xzyte', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-xzyte.png',
+                   	 url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-xzyte&api_key=MIcWPyCpm6maZGJQ' },
+               
+            ],
+
+            // ---------- ข่าว (nw.html) ----------
+            nw: [
+                
+                { id: 'hd-abc', name: 'ABC News', logo: 'https://raw.githubusercontent.com/jasminrabbit/logo/refs/heads/main/abcnews.png',
+                    	url: 'https://kicksball.com/player/abcnews' },
+                { id: 'hd-cnn', name: 'CNN', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-cnn.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-cnn&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'cnn', name: 'CNN HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-cnn.png',
+			url: 'https://kicksball.com/player/cnn' },
+  		{ id: 'uk-bbcnewshd', name: 'BBC News', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-bbcnewshd.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-bbcnewshd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'sd-bloomberg', name: 'Bloomberg', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-bloomberg.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-bloomberg&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'us-foxnews', name: 'Fox News', logo: 'https://images.streamx-web.org/images/tv/channels_icons/us-foxnews.png',
+
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=us-foxnews&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-foxnews', name: 'Fox News UK', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-foxnews.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-foxnews&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'us-cnbc', name: 'CNBC', logo: 'https://images.streamx-web.org/images/tv/channels_icons/us-cnbc.png',
+                    	url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=us-cnbc&api_key=MIcWPyCpm6maZGJQ' },
+              
+                { id: 'uk-skynews', name: 'Sky News', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-skynews.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-skynews&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'sd-nhkworld', name: 'NHK World', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-nhkworld.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-nhkworld&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'sd-deutschewelle', name: 'Deutsche Welle', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-deutschewelle.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-deutschewelle&api_key=MIcWPyCpm6maZGJQ' },
+
+
+
+            ],
+
+            // ---------- เด็ก (kd.html) ----------
+            kd: [
+                { id: 'hd-dreamworks', name: 'DreamWorks', logo: 'https://images.streamx-web.org/images/tv/channels_icons/hd-dreamworks.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=hd-dreamworks&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'sd-cartoonnetwork', name: 'Cartoon Network',logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-cartoonnetworkbkp.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-cartoonnetwork&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'sd-nickelodeon', name: 'Nickelodeon', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-nickelodeon.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-nickelodeon&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'sd-boomerang', name: 'Boomerang', logo: 'https://images.streamx-web.org/images/tv/channels_icons/sd-boomerang.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=sd-boomerang&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'streamx-disney2', name: 'Disney', logo: 'https://www.xtf-plus.com/img/disney2.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=streamx-disney2&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-citv', name: 'CITV', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-citv.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-citv&api_key=MIcWPyCpm6maZGJQ' },
+            ],
+
+            // ---------- อินเตอร์ (en.html) ----------
+            en: [
+                { id: 'uk-foxnews', name: 'Fox News UK', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-foxnews.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-foxnews&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-bbcnewshd', name: 'BBC News HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-bbcnewshd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-bbcnewshd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-bbc1hd', name: 'BBC One', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-bbc1hd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-bbc1hd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-itv1hd', name: 'ITV1', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-itv1hd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-itv1hd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-channel4hd', name: 'Channel 4', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-channel4hd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-channel4hd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-discovery', name: 'Discovery UK', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-discovery.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-discovery&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-history', name: 'History UK', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-history.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-history&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-natgeo', name: 'Nat Geo', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-natgeo.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-natgeo&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-film4', name: 'Film4', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-film4.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-film4&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-sky1', name: 'Sky1', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-sky1.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-sky1&api_key=MIcWPyCpm6maZGJQ' },
+            ],
+
+            // ---------- TV VIP (vip.html) — ใช้ชุดเดียวกับ en แต่เพิ่มอีก 2 ช่อง ----------
+            vip: [
+                { id: 'uk-foxnews', name: 'Fox News UK', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-foxnews.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-foxnews&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-bbcnewshd', name: 'BBC News HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-bbcnewshd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-bbcnewshd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-bbc1hd', name: 'BBC One', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-bbc1hd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-bbc1hd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-itv1hd', name: 'ITV1', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-itv1hd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-itv1hd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-channel4hd', name: 'Channel 4', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-channel4hd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-channel4hd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-discovery', name: 'Discovery UK', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-discovery.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-discovery&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-history', name: 'History UK', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-history.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-history&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-natgeo', name: 'Nat Geo', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-natgeo.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-natgeo&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-film4', name: 'Film4', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-film4.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-film4&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-sky1', name: 'Sky1', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-sky1.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-sky1&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-skycinema-premiere', name: 'Sky Cinema Premiere',
+                    logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-skycinema-premiere.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-skycinema-premiere&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-skycinema-action', name: 'Sky Cinema Action',
+                    logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-skycinema-action.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-skycinema-action&api_key=MIcWPyCpm6maZGJQ' },
+            ],
+
+            // ---------- อื่นๆ (ot.html) — ใช้ชุดเดียวกับ en แต่ปรับชื่อ ----------
+            ot: [
+                { id: 'uk-foxnews', name: 'Fox News UK', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-foxnews.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-foxnews&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-bbcnewshd', name: 'BBC News HD', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-bbcnewshd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-bbcnewshd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-bbc1hd', name: 'BBC One', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-bbc1hd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-bbc1hd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-itv1hd', name: 'ITV1', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-itv1hd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-itv1hd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-channel4hd', name: 'Channel 4', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-channel4hd.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-channel4hd&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-discovery', name: 'Discovery UK', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-discovery.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-discovery&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-history', name: 'History UK', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-history.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-history&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-natgeo', name: 'Nat Geo', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-natgeo.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-natgeo&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-film4', name: 'Film4', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-film4.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-film4&api_key=MIcWPyCpm6maZGJQ' },
+                { id: 'uk-sky1', name: 'Sky1', logo: 'https://images.streamx-web.org/images/tv/channels_icons/uk-sky1.png',
+                    url: 'https://embed-xlb.eatmorebanana.org/player_basic.php?channel=uk-sky1&api_key=MIcWPyCpm6maZGJQ' },
+            ]
+        };
+
+        // ============================================================
+        //  STATE
+        // ============================================================
+        let currentCategory = 'fr';
+        let searchTerm = '';
+
+        // DOM refs
+        const categoryContainer = document.getElementById('categoryContainer');
+        const channelsGrid = document.getElementById('channelsGrid');
+        const categoryTitle = document.getElementById('categoryTitle');
+        const resultCount = document.getElementById('resultCount');
+        const searchInput = document.getElementById('searchInput');
+        const playerModal = document.getElementById('playerModal');
+        const playerIframe = document.getElementById('playerIframe');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        // ============================================================
+        //  CATEGORY DEFINITIONS
+        // ============================================================
+        const CATEGORIES = [
+            { key: 'fr', label: 'ฟรีทีวี', icon: 'bi-tv' },
+            { key: 'sp', label: 'กีฬา', icon: 'bi-trophy' },
+            { key: 'dc', label: 'สารคดี', icon: 'bi-book' },
+            { key: 'mv', label: 'บันเทิง', icon: 'bi-film' },
+            { key: 'nw', label: 'ข่าว', icon: 'bi-newspaper' },
+            { key: 'kd', label: 'เด็ก', icon: 'bi-emoji-smile' },
+            
+	   
+        ];
+
+        // ============================================================
+        //  RENDER FUNCTIONS
+        // ============================================================
+        function renderCategories() {
+            categoryContainer.innerHTML = CATEGORIES.map(cat =>
+                `<button class="cat-btn ${cat.key === currentCategory ? 'active' : ''}" data-category="${cat.key}">
+                    <i class="bi ${cat.icon}"></i> ${cat.label}
+                </button>`
+            ).join('');
+
+            // Event listeners
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const key = btn.dataset.category;
+                    if (key === currentCategory && searchTerm === '') return;
+                    currentCategory = key;
+                    searchTerm = '';
+                    searchInput.value = '';
+                    updateUI();
+                });
+            });
+        }
+
+        function getChannelsForCategory(key) {
+            return CHANNELS[key] || [];
+        }
+
+        function getAllChannels() {
+            let all = [];
+            for (const key in CHANNELS) {
+                all = all.concat(CHANNELS[key].map(ch => ({ ...ch, category: key })));
+            }
+            return all;
+        }
+
+        function renderChannels(channels) {
+            if (!channels || channels.length === 0) {
+                channelsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-search"></i>
+                        <p>ไม่พบช่องที่ค้นหา</p>
+                    </div>
+                `;
+                resultCount.textContent = '0 ช่อง';
+                return;
+            }
+
+            channelsGrid.innerHTML = channels.map(ch =>
+                `<div class="channel-card" data-url="${ch.url}" data-name="${ch.name}">
+                    <div class="logo-wrap">
+                        <img src="${ch.logo}" alt="${ch.name}" loading="lazy" onerror="this.style.display='none'">
+                    </div>
+                    <span class="channel-name">${ch.name}</span>
+                    <i class="bi bi-play-circle play-icon"></i>
+                </div>`
+            ).join('');
+
+            resultCount.textContent = `${channels.length} ช่อง`;
+
+            // Click handler for each card
+            document.querySelectorAll('.channel-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const url = card.dataset.url;
+                    openPlayer(url);
+                });
+            });
+        }
+
+        function updateUI() {
+            // Update category title
+            const cat = CATEGORIES.find(c => c.key === currentCategory);
+            categoryTitle.textContent = cat ? cat.label : '';
+
+            // Highlight active category
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.category === currentCategory);
+            });
+
+            // Get channels
+            let channels = [];
+            if (searchTerm.trim() === '') {
+                channels = getChannelsForCategory(currentCategory);
+            } else {
+                // Search across all categories
+                const all = getAllChannels();
+                const term = searchTerm.trim().toLowerCase();
+                channels = all.filter(ch =>
+                    ch.name.toLowerCase().includes(term) ||
+                    ch.id.toLowerCase().includes(term)
+                );
+                // แสดงหมวดหมู่ที่ค้นหา
+                categoryTitle.textContent = `ผลการค้นหา "${searchTerm.trim()}"`;
+            }
+
+            renderChannels(channels);
+        }
+
+        // ============================================================
+        //  PLAYER MODAL
+        // ============================================================
+        function openPlayer(url) {
+            playerIframe.src = url; autoplay=1;
+            playerModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePlayer() {
+            playerIframe.src = '';
+            playerModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal events
+        closeModalBtn.addEventListener('click', closePlayer);
+        playerModal.addEventListener('click', (e) => {
+            if (e.target === playerModal) closePlayer();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closePlayer();
+        });
+
+        // ============================================================
+        //  SEARCH
+        // ============================================================
+        searchInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            searchTerm = val;
+            updateUI();
+        });
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        renderCategories();
+        updateUI();
+
+        console.log('🎬 DontKnow IPTV พร้อมใช้งานแล้ว!');
+    </script>
+</body>
+</html>
