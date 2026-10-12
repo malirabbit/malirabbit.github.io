@@ -1,0 +1,55 @@
+```yaml
+name: Run Python Script and Save File
+
+on:
+  push:
+    branches: [ "main" ] # ทำงานทุกครั้งที่มีการ push โค้ดขึ้น branch main
+  # schedule:
+  #   - cron: '0 0 * * *' # เปิดบรรทัดนี้ถ้าต้องการให้รันอัตโนมัติทุกๆ วัน (เวลาเที่ยงคืน)
+
+permissions:
+  contents: write # ให้สิทธิ์ Action แก้ไขและบันทึกไฟล์กลับเข้า repo
+
+jobs:
+  run-python:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. ดึงโค้ดจาก Repository มาที่ตัวรัน (Runner)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. ติดตั้ง Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # 3. ติดตั้ง Library เพิ่มเติม (ถ้ามี)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # 4. รันไฟล์ Python ของคุณ
+      - name: Run script.py
+        run: python main.py
+
+      # 5. สั่ง Commit และ Push ไฟล์ที่ถูกสร้างขึ้นกลับเข้า GitHub
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # เช็คว่ามีไฟล์ใหม่หรือไฟล์ถูกแก้ไขไหม
+          git status
+          
+          # ระบุชื่อไฟล์ที่ต้องการให้เซฟกลับเข้า Repo (สามารถเปลี่ยน output.txt เป็นชื่ออื่น หรือใช้ dấu * เช่น data/* ได้)
+          git add output.txt 
+          
+          # ทำการcommit (หากไม่มีไฟล์เปลี่ยน จะไม่ทำการ commit ให้ error)
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-generated file from Python script [skip ci]"
+          
+          # ส่งไฟล์ขึ้น GitHub
+          git push
+
+```
