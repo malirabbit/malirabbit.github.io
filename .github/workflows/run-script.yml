@@ -31,7 +31,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       # 4. รันไฟล์ Python ของคุณ
-      - name: Run script.py
+      - name: Run epg2.py
         run: python epg2.py
 
       # 5. สั่ง Commit และ Push ไฟล์ที่ถูกสร้างขึ้นกลับเข้า GitHub
